@@ -43,7 +43,7 @@ const Sidebar = () => {
                     </Link>
 
                     <Link to={'/responden'} className={`${location.pathname === '/responden' && 'border-blue-600 border-l-4 text-blue-600'} flex text-start gap-[15px] px-4 py-2 w-full`}>
-                        <h1 className={`hover:text-blue-600 text-base`}>Responden</h1>
+                        <h1 className={`hover:text-blue-600 text-base`}>Masyarakat</h1>
                     </Link>
                     
                     <Link to={'/daerah-rawan-narkoba'} className={`${location.pathname === '/daerah-rawan-narkoba' && 'border-blue-600 border-l-4'} flex text-start gap-[15px] px-4 py-2 w-full`}>

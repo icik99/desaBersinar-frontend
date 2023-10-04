@@ -6,17 +6,22 @@ import AddButton from '../components/AddButton'
 import Modal from '../components/Modal'
 import Api from '../Api'
 import toast from 'react-hot-toast'
+import { IconInsertPhoto } from '../assets'
+import ModalDelete from '../components/ModalDelete'
 
 const Relawan = () => {
 
+  const [showModalDelete, setShowModalDelete] = useState()
   const [addRelawan, setAddRelawan] = useState()
   const [editRelawan, setEditRelawan] = useState()
   const [detailRelawan, setDetailRelawan] = useState()
   const [passwordType, setPasswordType] = useState('password')
   const [dataRelawan, setDataRelawan] = useState('')
+  const [dataDetailRelawan, setDataDetailRelawan] = useState('')
   const [refresh, setRefresh] = useState()
 
   //State Relawan
+  const [idRelawan, setIdRelawan] = useState('')
   const [name, setName] = useState('')
   const [jabatan, setJabatan] = useState('')
   const [instansi, setInstansi] = useState('')
@@ -26,6 +31,31 @@ const Relawan = () => {
   const [address, setAddress] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+
+  const [viewImage, setViewImage] = useState('')
+  const [uploadImage, setUploadImage] = useState('')
+
+  //Handle Image
+    const handleViewImage = (e) => {
+        const maxSize = 2 * 1024 * 1024
+        const allowedExtensions = ['jpg', 'jpeg', 'png'];
+        const file = e.target.files[0]
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        if (file && file.size > maxSize){
+            toast.error('gambar harus < 2MB')
+            setUploadImage(null)
+        } else if (!allowedExtensions.includes(fileExtension)){
+            toast.error('file harus jpg, jpeg, atau png')
+        } else {
+            setViewImage(URL.createObjectURL(e.target.files[0]))
+            const reader = new FileReader()
+                reader.readAsDataURL(file)
+                reader.onload = () => {
+                setUploadImage(reader.result)
+            };
+        }
+    }
+                                        
   
   const createRelawan = async () => {
     try {
@@ -35,7 +65,7 @@ const Relawan = () => {
         installation: instansi,
         email: email,
         phone: phone,
-        image: '',
+        image: uploadImage,
         address: address,
         username: username,
         password: password
@@ -62,20 +92,67 @@ const Relawan = () => {
   }
 
   const openDetailRelawan = async (id) => {
+    setDetailRelawan(!detailRelawan)
     try {
       const response = await Api.GetRelawanById(localStorage.getItem('token'), id)
+      setDataDetailRelawan(response.data.data)
     } catch (error) {
-      
+      console.log(error)
     }
   }
 
-  const deleteRelawan = async (id) => {
+  const openEditRelawan = async (id) => {
+    setIdRelawan(id)
+    setEditRelawan(!editRelawan)
     try {
-      const resposne = await Api.DeleteRelawan(localStorage.getItem('token'), id)
+      const response = await Api.GetRelawanById(localStorage.getItem('token'), id)
+      setName(response.data.data.fullname)
+      setJabatan(response.data.data.jabatan)
+      setInstansi(response.data.data.installation)
+      setEmail(response.data.data.email)
+      setPhone(response.data.data.phone)
+      setAddress(response.data.data.address)
+      setViewImage(response.data.data.image)
+      console.log(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const updateRelawan = async () => {
+    try {
+      const data = {
+        fullname: name,
+        jabatan: jabatan,
+        installation: instansi,
+        email: email,
+        phone: phone,
+        image: uploadImage,
+        address: address,
+        username: username,
+        password: password
+      }
+      console.log(data)
+      const response = await Api.UpdateRelawan(localStorage.getItem('token'), data, idRelawan)
+      toast.success('Success Update Data!')
+      setRefresh(true)
+      setEditRelawan(!editRelawan)
+    } catch (error) {
+      console.log(error)
+      toast.error(error.response.message)
+
+    }
+  }
+
+  const deleteRelawan = async () => {
+    try {
+      const resposne = await Api.DeleteRelawan(localStorage.getItem('token'), idRelawan)
       toast.success('Success Delete')
+      setShowModalDelete(!showModalDelete)
       setRefresh(true)
     } catch (error) {
       console.log(error)
+      toast.error(error.response.message)
     }
   }
 
@@ -100,6 +177,12 @@ const Relawan = () => {
     }
   }
 
+  const deleteFileModal = (id) => {
+    setShowModalDelete(!showModalDelete)
+    setIdRelawan(id)
+    setRefresh(true)
+  }
+
   useEffect(() => {
     getRelawan()
     setRefresh(false)
@@ -116,6 +199,19 @@ const Relawan = () => {
       content={
         <div className='space-y-[40px] w-full'> 
           <div className="space-y-4 md:space-y-6">
+            <div className='flex gap-[20px] mb-[28px]'>
+                <h1 className='mb-2 text-xs font-medium text-gray-900'>Photo <span className='text-[#E00101]'>*</span></h1>
+                <label htmlFor='upload-image'>
+                    <div className='w-[87px] h-[87px] rounded-full bg-[#D9D9D9] bg-cover shadow-md border' style={{ backgroundImage: `url(${viewImage})` }}>
+                        {!viewImage &&
+                            <div className='flex flex-col justify-center items-center space-y-3 h-full'>
+                                <img src={IconInsertPhoto} alt='Insert Humanusia' className='object-contain'/>
+                            </div>
+                        }
+                    </div>
+                    <input type='file' className='hidden' id='upload-image' onChange={ (e) => handleViewImage(e) }/>
+                </label>
+            </div>
             <div>
                 <label className="mb-2 text-xs font-medium text-gray-900">Nama <span className='text-red-600'>*</span></label>
                 <input onChange={(e) => setName(e.target.value)} value={name} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Nama...' />
@@ -212,6 +308,20 @@ const Relawan = () => {
       content={
         <div className='space-y-[40px] w-full'> 
           <div className="space-y-4 md:space-y-6">
+
+            <div className='flex gap-[20px] mb-[28px]'>
+                <h1 className='mb-2 text-xs font-medium text-gray-900'>Photo <span className='text-[#E00101]'>*</span></h1>
+                <label htmlFor='upload-image'>
+                    <div className='w-[87px] h-[87px] rounded-full bg-[#D9D9D9] bg-cover shadow-md border' style={{ backgroundImage: `url(${image? image : viewImage })` }}>
+                        {!viewImage &&
+                            <div className='flex flex-col justify-center items-center space-y-3 h-full'>
+                                <img src={IconInsertPhoto} alt='Insert Humanusia' className='object-contain'/>
+                            </div>
+                        }
+                    </div>
+                    <input type='file' className='hidden' id='upload-image' onChange={ (e) => handleViewImage(e) }/>
+                </label>
+            </div>
             <div>
                 <label className="mb-2 text-xs font-medium text-gray-900">Nama <span className='text-red-600'>*</span></label>
                 <input onChange={(e) => setName(e.target.value)} value={name} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Nama...' />
@@ -273,12 +383,12 @@ const Relawan = () => {
             <div className='flex items-center gap-3'>
               <div className='w-full'>
                   <label className="mb-2 text-xs font-medium text-gray-900">Username <span className='text-red-600'>*</span></label>
-                  <input onChange={(e) => setUsername(e.target.value)} value={username} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Email...' />
+                  <input onChange={(e) => setUsername(e.target.value)} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Email...' />
               </div>
               <div className='w-full'>
                   <label className="mb-2 text-xs font-medium text-gray-900">Password <span className='text-red-600'>*</span></label>
                   <div className='relative'>
-                    <input onChange={(e) => setPassword(e.target.value)} value={password} type={passwordType} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='*******' />
+                    <input onChange={(e) => setPassword(e.target.value)} type={passwordType} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='*******' />
                     <button onClick={ChangePasswordType} className='absolute right-3 top-2.5 text-xl text-[#A8A8A8]'>
                         {passwordType === 'text' ?
                             <AiOutlineEye/>
@@ -293,12 +403,56 @@ const Relawan = () => {
             
 
             <div className='flex items-center justify-end gap-3'>
-              <button onClick={() => {setAddRelawan(!addRelawan); resetForm()}} className=" text-primary-600 border bg-gray-50  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Cancel</button>
-              <button onClick={createRelawan}  className=" text-white bg-primary-600  font-medium rounded-lg text-sm px-7 py-2.5 text-center ">Save</button>
+              <button onClick={() => {setEditRelawan(!editRelawan); resetForm()}} className=" text-primary-600 border bg-gray-50  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Cancel</button>
+              <button onClick={updateRelawan} className=" text-white bg-primary-600  font-medium rounded-lg text-sm px-7 py-2.5 text-center ">Save</button>
             </div>
           </div>
         </div>   
     }/>
+
+    <Modal
+      activeModal={detailRelawan}
+      title={'Detail Data Relawan'}
+      buttonClose={ () => setDetailRelawan(!detailRelawan)}
+      width={'600px'}
+      content={
+        <div className='space-y-[40px] w-full'> 
+          <div className="space-y-4 md:space-y-6 ">
+            <div className='flex items-start gap-5'>
+
+              <div className='grid grid-cols-10 w-full'>
+                <div className='flex flex-col col-span-3 w-full'>
+                    <h1 className='border-b-2 py-1 text-sm'>Nama</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Instansi</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Jabatan</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Email</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Telepon</h1>
+                </div>
+                <div className='flex flex-col col-span-7 w-full'>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetailRelawan.fullname?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetailRelawan.installation?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetailRelawan.jabatan?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetailRelawan.email?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetailRelawan.phone?? '-'}</h1>
+                </div>
+              </div>
+
+              <img className='w-[100px] h-[100px] rounded-lg border-2' src="https://i.pravatar.cc/200" alt="profile" />
+
+            </div>
+            <div className='flex items-center justify-end gap-3'>
+              <button onClick={() => setDetailRelawan(!detailRelawan)} className=" text-primary-600 border bg-gray-50  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Close</button>
+            </div>
+
+          </div>
+        </div>   
+    }/>
+
+    <ModalDelete
+        activeModal={showModalDelete}
+        buttonClose={() => setShowModalDelete(!showModalDelete)}
+        submitButton={deleteRelawan}
+    />
 
     <div className='min-h-screen'>
       <div className='flex bg-[#F8F8F8]'>
@@ -366,13 +520,13 @@ const Relawan = () => {
                               </td>
                               <td className="text-sm text-gray-900 font-light px-4 py-2 whitespace-nowrap text-center">
                                 <div className='flex items-center justify-center gap-2 text-lg'>
-                                  <button className='p-1.5 bg-gray-300  rounded-lg'>
+                                  <button onClick={() => openDetailRelawan(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
                                     <AiFillEye/>
                                   </button>
-                                  <button  onClick={() => setEditRelawan(!editRelawan)} className='p-1.5 bg-gray-300  rounded-lg'>
+                                  <button  onClick={() => openEditRelawan(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
                                     <AiFillEdit/>
                                   </button>
-                                  <button onClick={() => deleteRelawan(item.id)} className='p-1.5 bg-gray-300 rounded-lg'>
+                                  <button onClick={() => deleteFileModal(item.id)} className='p-1.5 bg-gray-300 rounded-lg'>
                                     <AiFillDelete/>
                                   </button>
                                 </div>

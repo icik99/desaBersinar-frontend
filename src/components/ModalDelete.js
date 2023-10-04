@@ -1,6 +1,6 @@
 import React from 'react'
 import { IoClose } from 'react-icons/io5'
-import { RxCrossCircled } from 'react-icons/rx'
+import { TbTrashOff } from 'react-icons/tb'
 
 const ModalDelete = ({activeModal, buttonClose, submitButton}) => {
 
@@ -14,8 +14,8 @@ const ModalDelete = ({activeModal, buttonClose, submitButton}) => {
                         </button>
                     </div>
                     <div className='mt-6 flex flex-col justify-center items-center gap-5'>
-                        <RxCrossCircled className='text-[120px] text-[#C1121F]'/>
-                        <h1 className='text-center'>Do you really want to delete these records? This process cannot be undone.</h1>
+                        <TbTrashOff className='text-[120px] text-[#C1121F]'/>
+                        <h1 className='text-center'>Are you sure you wish to erase these records? This action is irreversible.</h1>
                         <div className='flex item-center justify-center gap-3 mt-5'>
                             <button onClick={buttonClose} className='bg-[#ECECEC] text-[#015995] text-sm rounded-[6px] w-[100px] py-[10px] px-[25px]'>Cancel</button>
                             <button onClick={submitButton} className='bg-[#015995] text-white text-sm rounded-[6px] w-[100px] py-[10px] px-[25px]'>Delete</button>

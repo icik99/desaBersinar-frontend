@@ -46,7 +46,7 @@ class Api {
         })
     }
     static GetRelawanById(token, id) {
-        let path = `relawan/get/${id}`;
+        let path = `relawan/get-detail/${id}`;
         return request(`${this.urlAPI()}${path}`, {
             method: 'GET',
             headers: {
