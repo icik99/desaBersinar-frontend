@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Sidebar from '../components/Sidebar'
 import Navbar from '../components/Navbar'
-import { AiFillDelete, AiFillEdit, AiFillEye, AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
+import { AiFillDelete, AiFillEdit, AiFillEye, AiOutlineEye, AiOutlineEyeInvisible, AiOutlineSearch } from 'react-icons/ai'
 import AddButton from '../components/AddButton'
 import Modal from '../components/Modal'
 import Api from '../Api'
 import toast from 'react-hot-toast'
 import { IconInsertPhoto } from '../assets'
 import ModalDelete from '../components/ModalDelete'
+import { debounce } from 'lodash'
 
 const Relawan = () => {
 
@@ -83,12 +84,25 @@ const Relawan = () => {
 
   const getRelawan = async () => {
     try {
-      const response = await Api.GetRelawan(localStorage.getItem('token'))
-      console.log(response)
+      const response = await Api.GetRelawan(localStorage.getItem('token'), '')
       setDataRelawan(response.data.data)
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const getSearchRelawan = debounce(async(keyword) => {
+    try {
+      const response = await Api.GetRelawan(localStorage.getItem('token'), keyword)
+      setDataRelawan(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }, 500)
+
+  const handleSearch = (e) => {
+    const searchKeyword = e.target.value
+    getSearchRelawan(searchKeyword)
   }
 
   const openDetailRelawan = async (id) => {
@@ -465,7 +479,13 @@ const Relawan = () => {
               <h1 className="text-black text-2xl">Relawan</h1>
               <h1 className="text-gray-400 text-base">List of Relawan</h1>
             </div>
-            <AddButton triggerModal={() => setAddRelawan(!addRelawan)} title={'Relawan'}/>
+            <div className='flex gap-2'>
+              <div className='relative'>
+                  <AiOutlineSearch className='absolute left-[14px] top-[10px] text-[#A8A8A8] text-lg'/>
+                  <input placeholder='Cari Nama atau Nomor Telepon ...' onChange={handleSearch} className='text-[#A8A8A8] text-xs font-[500] pl-12 border rounded-[12px] py-2 w-full lg:w-[300px]'/>
+              </div>
+              <AddButton triggerModal={() => setAddRelawan(!addRelawan)} title={'Relawan'}/>
+            </div>
           </div>
 
           <div className='px-[40px]'>

@@ -1,17 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
 import { GrUserAdmin } from 'react-icons/gr';
 import L from 'leaflet';
 import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
 import { Logo_BNN } from '../assets';
+import Api from '../Api';
 
 function Dashboard() {
+
+  const [dataCount, setDataCount] = useState('')
 
   const customIcon = L.icon({
     iconUrl: Logo_BNN,
     iconSize: [32, 32]
-});
+  });
+
+  const getCount = async () => {
+    try {
+      const response = await Api.CountDashboard(localStorage.getItem('token'))
+      setDataCount(response.data.data)
+    } catch (error) {
+     console.log(error) 
+    }
+  }
+
+  useEffect(() => {
+    getCount()
+  }, [])
 
   return (
     <div className='min-h-screen'>
@@ -24,23 +40,23 @@ function Dashboard() {
                   <div className='py-[40px] px-[30px] bg-white w-full'>
                       <div className='flex items-center justify-between  mb-2'>
                         <h1 className='text-[22px] font-medium'>Responden</h1>
-                        <h1 className='text-red-500 text-[22px] font-medium'>29</h1>
+                        <h1 className='text-red-500 text-[22px] font-medium'>{dataCount.countResponden?? '0'}</h1>
                       </div>
-                      <p className='w-[280px] opacity-40 text-black text-sm font-normal'>Terdapat 29 responden yang telah merespon kuesioner.</p>
+                      <p className='w-[280px] opacity-40 text-black text-sm font-normal'>Terdapat {dataCount.countResponden?? '0'} responden yang telah merespon kuesioner.</p>
                   </div>
                   <div className='py-[40px] px-[30px] bg-white w-full'>
                       <div className='flex items-center justify-between  mb-2'>
                         <h1 className='text-[22px] font-medium'>Kuesioner</h1>
-                        <h1 className='text-red-500 text-[22px] font-medium'>29</h1>
+                        <h1 className='text-red-500 text-[22px] font-medium'>{dataCount.countFormulir?? '0'}</h1>
                       </div>
-                      <p className='w-[280px] opacity-40 text-black text-sm font-normal'>Sudah ada 29 kuesioner yang telah disiapkan.</p>
+                      <p className='w-[280px] opacity-40 text-black text-sm font-normal'>Sudah ada {dataCount.countFormulir?? '0'} kuesioner yang telah disiapkan.</p>
                   </div>
                   <div className='py-[40px] px-[30px] bg-white w-full'>
                       <div className='flex items-center justify-between  mb-2'>
                         <h1 className='text-[22px] font-medium'>Relawan</h1>
-                        <h1 className='text-red-500 text-[22px] font-medium'>29</h1>
+                        <h1 className='text-red-500 text-[22px] font-medium'>{dataCount.countRelawan?? '0'}</h1>
                       </div>
-                      <p className='w-[280px] opacity-40 text-black text-sm font-normal'>Jumlah relawan saat ini mencapai 29 orang.</p>
+                      <p className='w-[280px] opacity-40 text-black text-sm font-normal'>Jumlah relawan saat ini mencapai {dataCount.countRelawan?? '0'} orang.</p>
                   </div>
               </div>
               <div className='bg-white py-[20px] px-[30px] space-y-3'>

@@ -36,8 +36,18 @@ class Api {
         })
     }
 
-    static GetRelawan(token) {
-        let path = `relawan/get`;
+    static CountDashboard(token) {
+        let path = `count-dashboard`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static GetRelawan(token, keyword) {
+        let path = `relawan/get?search=${keyword}`;
         return request(`${this.urlAPI()}${path}`, {
             method: 'GET',
             headers: {
