@@ -55,9 +55,6 @@ const Admin = () => {
                             <th scope="col" class="text-sm font-medium text-gray-900 px-4 py-4 text-center">
                               Password
                             </th>
-                            <th scope="col" class="text-sm font-medium text-gray-900 px-4 py-4 text-center">
-                              Actions
-                            </th>
                           </tr>
                         </thead>
                         <tbody>
@@ -68,19 +65,6 @@ const Admin = () => {
                             </td>
                             <td class="text-sm text-gray-900 font-light px-4 py-4 whitespace-nowrap text-center">
                               Admin123!
-                            </td>
-                            <td class="text-sm text-gray-900 font-light px-4 py-4 whitespace-nowrap text-center">
-                              <div className='flex items-center justify-center gap-2 text-xl'>
-                                <button className='p-2 bg-red-700 rounded-md text-white'>
-                                  <AiFillDelete/>
-                                </button>
-                                <button className='p-2 bg-blue-700 rounded-md text-white'>
-                                  <AiFillEdit/>
-                                </button>
-                                <button className='p-2 bg-indigo-700 rounded-md text-white'>
-                                  <AiFillEye/>
-                                </button>
-                              </div>
                             </td>
                           </tr>
                         </tbody>
