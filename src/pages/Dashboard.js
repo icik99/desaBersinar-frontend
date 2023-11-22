@@ -60,7 +60,7 @@ function Dashboard() {
                   </div>
               </div>
               <div className='bg-white py-[20px] px-[30px] space-y-3'>
-                <h1 className=''>Lokasi Rawan Narkoba di Kabupaten Banyumas</h1>
+                <h1 className=''>Peta Kabupaten Banyumas</h1>
                 <div className='rounded-xl overflow-hidden shadow-lg border-gray-400 border'>
                   <MapContainer center={[-7.424451664797593, 109.23011867976774]} zoom={14} style={{ height: '400px', width: '100%', zIndex: '10'}}>
                     <TileLayer

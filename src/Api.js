@@ -9,7 +9,7 @@ class Api {
 
     // Begin :: Auth
     static Login(username, password) {
-        let path = 'admin/login';
+        let path = 'login';
         return request(`${this.urlAPI()}${path}`, {
             method: 'POST',
             data: {
@@ -45,6 +45,8 @@ class Api {
             }
         })
     }
+
+    // Relawan
 
     static GetRelawan(token, keyword) {
         let path = `relawan/get?search=${keyword}`;
@@ -96,6 +98,136 @@ class Api {
             },
         })
     }
+    // Masyarakat
+
+    static GetMasyarakat(token, keyword) {
+        let path = `masyarakat/get?search=${keyword}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+    static GetMasyarakatById(token, id) {
+        let path = `masyarakat/get-detail/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static CreateMasyarakat(token, data) {
+        let path = `masyarakat/create`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'POST',
+            data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+
+    static UpdateMasyarakat(token, data, id) {
+        let path = `masyarakat/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'PUT',
+            data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+    
+    static DeleteMasyarakat(token, id) {
+        let path = `masyarakat/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+
+    // Kecamatan dan Desa
+
+    static GetKecamatanDesa(token, id) {
+        let path = `list-kecamatan-desa?districts_id=${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    // Form Type
+    static GetTypeForm(token) {
+        let path = `type-formulir/get`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static CreateTypeForm(token, data) {
+        let path = `type-formulir/create`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'POST',
+            data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+
+    // Form
+
+    static CreateForm(token, data) {
+        let path = `formulir/create`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'POST',
+            data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+
+    static GetForm(token) {
+        let path = `formulir/get`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static GetFormByTypeForm(token, id) {
+        let path = `formulir/get/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static GetIndikator(token) {
+        let path = `indikator`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
 
 
 

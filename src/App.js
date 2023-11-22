@@ -10,6 +10,7 @@ import Relawan from './pages/Relawan';
 import DaerahRawanNarkoba from './pages/DaerahRawanNarkoba';
 import Responden from './pages/Responden';
 import Kuesioner from './pages/Kuesioner';
+import KuesionerType from './pages/KuesionerType';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route name='Relawan' path="/relawan" element={<Relawan/>}/>
         <Route name='Responden' path="/responden" element={<Responden/>}/>
         <Route name='Kuesioner' path="/kuesioner" element={<Kuesioner/>}/>
+        <Route name='KuesionerType' path="/kuesionerType" element={<KuesionerType />}/>
       </Routes>
     </div>
   );

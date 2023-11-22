@@ -8,7 +8,7 @@ import Api from '../Api'
 import toast from 'react-hot-toast'
 import { IconInsertPhoto } from '../assets'
 import ModalDelete from '../components/ModalDelete'
-import { debounce } from 'lodash'
+import { concat, debounce } from 'lodash'
 
 const Relawan = () => {
 
@@ -21,6 +21,10 @@ const Relawan = () => {
   const [dataDetailRelawan, setDataDetailRelawan] = useState('')
   const [refresh, setRefresh] = useState()
 
+  const [dataKecamatan, setDataKecamatan] = useState('')
+  const [dataDesa, setDataDesa] = useState('')
+  const [idKecamatan, setIdKecamatan] = useState('')
+
   //State Relawan
   const [idRelawan, setIdRelawan] = useState('')
   const [name, setName] = useState('')
@@ -32,6 +36,8 @@ const Relawan = () => {
   const [address, setAddress] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [kecamatan, setKecamatan] = useState('')
+  const [desa, setDesa] = useState('')
 
   const [viewImage, setViewImage] = useState('')
   const [uploadImage, setUploadImage] = useState('')
@@ -64,6 +70,8 @@ const Relawan = () => {
         fullname: name,
         jabatan: jabatan,
         installation: instansi,
+        desa: desa,
+        kecamatan: kecamatan,
         email: email,
         phone: phone,
         image: uploadImage,
@@ -72,6 +80,7 @@ const Relawan = () => {
         password: password
       }
       const response = await Api.CreateRelawan(localStorage.getItem('token'), data)
+      console.log(data)
       setRefresh(true)
       toast.success('Berhasil Buat Relawan')
       resetForm()
@@ -100,10 +109,46 @@ const Relawan = () => {
     }
   }, 500)
 
+  
+
+  const getKecamatan = async () => {
+    try {
+      const response = await Api.GetKecamatanDesa(localStorage.getItem('token'), '')
+      setDataKecamatan(response.data.data)
+      console.log(response, 'kecamatan')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleSelectKecamatan = (e) => {
+    const selectedOption = dataKecamatan.find(
+      (data) => data.districts_id === parseInt(e.target.value)
+    );
+    if (selectedOption) {
+      setIdKecamatan(selectedOption.districts_id);
+      setKecamatan(selectedOption.name_kecamatan);
+    } else {
+      setIdKecamatan('')
+      setKecamatan('')
+    }
+  };
+
+  const getDesa = async() => {
+    try {
+      const response = await Api.GetKecamatanDesa(localStorage.getItem('token'), idKecamatan)
+      setDataDesa(response.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleSearch = (e) => {
     const searchKeyword = e.target.value
     getSearchRelawan(searchKeyword)
   }
+
+  
 
   const openDetailRelawan = async (id) => {
     setDetailRelawan(!detailRelawan)
@@ -139,6 +184,8 @@ const Relawan = () => {
         fullname: name,
         jabatan: jabatan,
         installation: instansi,
+        kecamatan: kecamatan,
+        desa: desa,
         email: email,
         phone: phone,
         image: uploadImage,
@@ -202,6 +249,14 @@ const Relawan = () => {
     setRefresh(false)
   }, [refresh])
 
+  useEffect(() => {
+    getKecamatan()
+  },[addRelawan, editRelawan])
+
+  useEffect(() => {
+    getDesa()
+  },[idKecamatan, kecamatan])
+
   return (
 
   <div>
@@ -234,7 +289,7 @@ const Relawan = () => {
             <div className='flex items-center gap-3'>
               <div className='w-full'>
                   <label className="mb-2 text-xs font-medium text-gray-900">Email <span className='text-red-600'>*</span></label>
-                  <input onChange={(e) => setEmail(e.target.value)} value={email} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Email...' />
+                  <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Email...' />
               </div>
 
               <div className='w-full'>
@@ -257,18 +312,24 @@ const Relawan = () => {
               </div>  
               <div className='w-full'>
                   <label className="mb-2 text-xs font-medium text-gray-900">Kecamatan <span className='text-red-600'>*</span></label>
-                  <input  type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Kecamatan...' />
+                  <select onChange={handleSelectKecamatan} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 "> 
+                        <option value="">Pilih Kecamatan...</option>
+                        {Object.values(dataKecamatan).map((item, idx) => (
+                          <option key={idx} value={item.districts_id}>{item.name_kecamatan}</option>
+                          ))}
+                  </select>
               </div>   
             </div> 
 
             <div className='flex items-center gap-2'>
               <div className='w-full'>
-                  <label className="mb-2 text-xs font-medium text-gray-900">Kelurahan <span className='text-red-600'>*</span></label>
-                  <input  type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Kelurahan...' />
-              </div>
-              <div className='w-full'>
-                  <label className="mb-2 text-xs font-medium text-gray-900">Desa <span className='text-red-600'>*</span></label>
-                  <input  type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Desa...' />
+                  <label className="mb-2 text-xs font-medium text-gray-900">Kelurahan / Desa<span className='text-red-600'>*</span></label>
+                  <select onChange={(e) => setDesa(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 "> 
+                        <option selected value="">Pilih Desa...</option>
+                        {Object.values(dataDesa).map((item, idx) => (
+                          <option key={idx} value={item.name}>{item.name}</option>
+                          ))}
+                  </select>
               </div>
             </div>
 
@@ -344,7 +405,7 @@ const Relawan = () => {
             <div className='flex items-center gap-3'>
               <div className='w-full'>
                   <label className="mb-2 text-xs font-medium text-gray-900">Email <span className='text-red-600'>*</span></label>
-                  <input onChange={(e) => setEmail(e.target.value)} value={email} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Email...' />
+                  <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Email...' />
               </div>
 
               <div className='w-full'>
@@ -360,28 +421,33 @@ const Relawan = () => {
                 <input onChange={(e) => setAddress(e.target.value)} value={address} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Nama...' />
             </div>
 
-            <div className="flex items-center gap-2">
-              <div className='w-full'>
-                  <label className="mb-2 text-xs font-medium text-gray-900">Kabupaten <span className='text-red-600'>*</span></label>
-                  <input value={'Banyumas'} type="text" disabled className="bg-gray-300 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Nama...' />
-              </div>  
-              <div className='w-full'>
-                  <label className="mb-2 text-xs font-medium text-gray-900">Kecamatan <span className='text-red-600'>*</span></label>
-                  <input  type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Kecamatan...' />
-              </div>   
-            </div> 
+              <div className="flex items-center gap-2">
+                <div className='w-full'>
+                    <label className="mb-2 text-xs font-medium text-gray-900">Kabupaten <span className='text-red-600'>*</span></label>
+                    <input value={'Banyumas'} type="text" disabled className="bg-gray-300 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Nama...' />
+                </div>  
+                <div className='w-full'>
+                    <label className="mb-2 text-xs font-medium text-gray-900">Kecamatan <span className='text-red-600'>*</span></label>
+                    <select onChange={handleSelectKecamatan} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 "> 
+                          <option value="">Pilih Kecamatan...</option>
+                          {Object.values(dataKecamatan).map((item, idx) => (
+                            <option key={idx} value={item.districts_id}>{item.name_kecamatan}</option>
+                            ))}
+                    </select>
+                </div>   
+              </div> 
 
-            <div className='flex items-center gap-2'>
-              <div className='w-full'>
-                  <label className="mb-2 text-xs font-medium text-gray-900">Kelurahan <span className='text-red-600'>*</span></label>
-                  <input  type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Kelurahan...' />
+              <div className='flex items-center gap-2'>
+                <div className='w-full'>
+                    <label className="mb-2 text-xs font-medium text-gray-900">Kelurahan / Desa<span className='text-red-600'>*</span></label>
+                    <select onChange={(e) => setDesa(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 "> 
+                          <option selected value="">Pilih Desa...</option>
+                          {Object.values(dataDesa).map((item, idx) => (
+                            <option key={idx} value={item.name}>{item.name}</option>
+                            ))}
+                    </select>
+                </div>
               </div>
-              <div className='w-full'>
-                  <label className="mb-2 text-xs font-medium text-gray-900">Desa <span className='text-red-600'>*</span></label>
-                  <input  type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Desa...' />
-              </div>
-            </div>
-
             <div>
                 <label className="mb-2 text-xs font-medium text-gray-900">Instansi <span className='text-red-600'>*</span></label>
                 <input onChange={(e) => setInstansi(e.target.value)} value={instansi} type="text" className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-xs rounded-lg  w-full p-2.5 " placeholder='Instansi...' />
@@ -484,7 +550,7 @@ const Relawan = () => {
                   <AiOutlineSearch className='absolute left-[14px] top-[10px] text-[#A8A8A8] text-lg'/>
                   <input placeholder='Cari Nama atau Nomor Telepon ...' onChange={handleSearch} className='text-[#A8A8A8] text-xs font-[500] pl-12 border rounded-[12px] py-2 w-full lg:w-[300px]'/>
               </div>
-              <AddButton triggerModal={() => setAddRelawan(!addRelawan)} title={'Relawan'}/>
+              <AddButton triggerModal={() => setAddRelawan(!addRelawan)}  bgColor={'blue-700'} title={'Relawan'}/>
             </div>
           </div>
 
@@ -520,7 +586,7 @@ const Relawan = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {Object.values(dataRelawan).map((item, idx) => (
+                          {dataRelawan? Object.values(dataRelawan).map((item, idx) => (
                             <tr key={idx} className="bg-gray-100 border-b">
                               <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 text-center border">{idx + 1}</td>
                               <td className="text-sm text-gray-900 font-light px-1 py-2 whitespace-nowrap text-start border">
@@ -552,7 +618,9 @@ const Relawan = () => {
                                 </div>
                               </td>
                             </tr>
-                          ))}
+                          )) : (
+                            <h1 className='mt-9 flex items-center justify-start'>(Tidak ada data relawan)</h1>
+                          )}
                         </tbody>
                       </table>
                     </div>
