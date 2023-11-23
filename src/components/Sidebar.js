@@ -1,8 +1,5 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { RiArrowRightSFill } from 'react-icons/ri';
-
-
 const Sidebar = () => {
 
     const [display, setDisplay] = useState(true)
@@ -13,14 +10,6 @@ const Sidebar = () => {
         localStorage.removeItem('token')
         navigate('/')
     }
-
-
-    // const [dashboard, setDashoard] = useState(false)
-    // const [admin, setAdmin] = useState(false)
-    // const [relawan, setRelawan] = useState(false)
-    // const [daerahNarkoba, setDaerahNarkoba] = useState(false)
-    // const [kuesioner, setKuesioner] = useState(false)
-
 
     return (
         <>
