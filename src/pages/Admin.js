@@ -6,22 +6,8 @@ import AddButton from '../components/AddButton';
 import Modal from '../components/Modal';
 
 const Admin = () => {
-  const [addModal, setAddModal] = useState()
   return (
     <div className='min-h-screen '>
-
-    <Modal
-      activeModal={addModal}
-      title={'Add Admin'}
-      buttonClose={ () => setAddModal(!addModal)}
-      width={'500px'}
-      content={
-        <div className='space-y-[40px] w-full'>
-
-        </div>
-      }
-    />
-    
       <div className='flex bg-[#F8F8F8]'>
         <Sidebar />
         <div className='w-full overflow-hidden'>
@@ -34,7 +20,6 @@ const Admin = () => {
               <h1 className="text-gray-400 text-base">List of Admin</h1>
             </div>
 
-            <AddButton triggerModal={()=> setAddModal(!addModal)} title={'Admin'}/>
 
           </div>
 

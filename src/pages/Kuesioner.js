@@ -6,19 +6,19 @@ import { IoMdAdd, IoMdArrowDropdown } from 'react-icons/io'
 import Api from '../Api'
 import toast from 'react-hot-toast'
 import Modal from '../components/Modal'
-import { Link } from 'react-router-dom'
-import CheckboxRepeater from '../components/CheckboxRepeater'
+import { Link, useLocation } from 'react-router-dom'
 import { AiFillDelete, AiOutlinePlus } from 'react-icons/ai'
 
 const Kuesioner = () => {
   const [modalFormAddType, setModalFormAddType] = useState('')
-  const [dataKuesionerType, setDataKuesionerType] = useState('')
   const [typeForm, setTypeForm] = useState('')
-  const [typeFormId, setTypeFormId] = useState('')
+  const [nameForm, setNameForm] = useState('')
+
+  const params = useLocation()
+  console.log(params.state.formTypeId, 'parameter')
 
   //Repeater Question
   const [questions, setQuestions] = useState(['']);
-  console.log(questions, 'questions')
 
   const handleInputChangeQuestion = (index, value) => {
     const updatedQuestions = [...questions];
@@ -37,9 +37,7 @@ const Kuesioner = () => {
   };
   const [descriptions, setDescriptions] = useState(['']);
   
-  
-  //Repeater Question
-  console.log(descriptions, 'desc')
+  //Repeater Description
 
   const handleInputChangeDescription = (index, value) => {
     const updatedDescriptions = [...descriptions];
@@ -53,11 +51,11 @@ const Kuesioner = () => {
     setDescriptions(updatedDescriptions);
   };
 
-  const getTypeForm = async () => {
+  const getTypeFormById = async () => {
     try {
-      const response = await Api.GetTypeForm(localStorage.getItem('token'))
-      console.log(response, 'typeForm')
-      setDataKuesionerType(response.data.data)
+      const response = await Api.GetTypeFormById(localStorage.getItem('token'), params.state.formTypeId)
+      console.log(response, 'typeById')
+      setNameForm(response.data.data.name)
     } catch (error) {
       console.log(error)
     }
@@ -68,7 +66,7 @@ const Kuesioner = () => {
       const data ={
         question: questions,
         description: descriptions,
-        typeFormulirId: typeFormId
+        typeFormulirId: params.state.formTypeId
       }
       console.log(data, 'sendedData')
       const response = await Api.CreateForm(localStorage.getItem('token'), data)
@@ -79,8 +77,18 @@ const Kuesioner = () => {
     }
   }
 
+  const getFormulir = async () => {
+    try {
+      const response = await Api.GetFormByTypeForm(localStorage.getItem('token'), params.state.formTypeId)
+      console.log(response, 'formResponse')
+    } catch (error) {
+      console.log(error) 
+    }
+  }
+
   useEffect(() => {
-    getTypeForm()
+    getTypeFormById()
+    getFormulir()
   }, [])
 
   return (
@@ -113,30 +121,10 @@ const Kuesioner = () => {
           <div className='px-[40px] space-y-[40px]'>
               <div className='flex items-end justify-between'>
                 <div className='font-medium space-y-[8px] '>
-                  <h1 className="text-black text-2xl">Kuesioner</h1>
-                  <h1 className="text-gray-400 text-base">List of Kuesioner</h1>
-                </div>
-                <div className='flex gap-3'>
-                  <Link to={'/kuesionerType'}>
-                    <AddButton bgColor={'blue-700'} title={'Form Type'}/>
-                  </Link>
-                  <AddButton bgColor={'blue-700'} title={'Kuesioner'}/>
+                  <h1 className="text-black text-2xl">Edit Pertanyaan</h1>
+                  <h1 className="text-gray-400 text-base">List of Pertanyaan For {nameForm}</h1>
                 </div>
               </div>
-
-              <div className='flex items-center justify-between'>
-                <div className='relative w-1/2'>
-                    <select onChange={(e) => setTypeFormId(e.target.value)} className='text-xs rounded-md border border-gray-300 outline-none text-gray-500 w-full py-[10px] px-[19px] appearance-none'>
-                        <option value="">Select Kuesioner...</option>
-                        {Object.values(dataKuesionerType).map((item,idx) => (
-                          <option key={idx} value={item.id}>{item.name}</option>
-
-                        ))}
-                    </select>
-                    <IoMdArrowDropdown className='absolute top-[9px] right-1 text-xl text-[#6B7280]'/>
-                </div>
-              </div>
-
           <div>
             <div className='flex items-center justify-end mb-2'>
             </div>
@@ -175,25 +163,6 @@ const Kuesioner = () => {
           </div>
         </div>
       </div>
-      {/* {questions.map((qna, index) => (
-        <div key={index}>
-          <input
-            type="text"
-            name="question"
-            value={qna.question}
-            placeholder="Pertanyaan"
-            onChange={(e) => handleInputChange(index, e)}
-          />
-          <input
-            type="text"
-            name="answer"
-            value={qna.answer}
-            placeholder="Jawaban"
-            onChange={(e) => handleInputChange(index, e)}
-          />
-        </div>
-      ))}
-      <button onClick={handleAddQuestion}>Tambah Pertanyaan dan Jawaban</button> */}
     </div>
   )
 }

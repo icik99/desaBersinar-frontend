@@ -4,7 +4,7 @@ class Api {
 
 
     static urlAPI() {
-        return 'http://localhost:5000/'
+        return 'http://localhost:5001/'
     }
 
     // Begin :: Auth
@@ -173,12 +173,42 @@ class Api {
             }
         })
     }
+    static GetTypeFormById(token, id) {
+        let path = `type-formulir/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
 
     static CreateTypeForm(token, data) {
         let path = `type-formulir/create`;
         return request(`${this.urlAPI()}${path}`, {
             method: 'POST',
             data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+
+    static UpdateTypeForm(token, data, id) {
+        let path = `type-formulir/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'PUT',
+            data,
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        })
+    }
+
+    static DeleteTypeForm(token, id) {
+        let path = `type-formulir/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'DELETE',
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -220,6 +250,26 @@ class Api {
 
     static GetIndikator(token) {
         let path = `indikator`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static GetDetailIndikator(token, id) {
+        let path = `indikator-detail/${id}`;
+        return request(`${this.urlAPI()}${path}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+    }
+
+    static GetBatasArea(token) {
+        let path = `batas-area-map`;
         return request(`${this.urlAPI()}${path}`, {
             method: 'GET',
             headers: {

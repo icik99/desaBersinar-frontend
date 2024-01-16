@@ -39,7 +39,7 @@ const Sidebar = () => {
                         <h1 className={`hover:text-blue-600 text-base`}>Daerah Rawan Narkoba</h1>
                     </Link>
 
-                    <Link to={'/kuesioner'} className={`${location.pathname === '/kuesioner' && 'border-blue-600 border-l-4'} flex text-start justify-between gap-[15px] px-4 py-2 w-full`}>
+                    <Link to={'/kuesionerType'} className={`${location.pathname === '/kuesionerType' && 'border-blue-600 border-l-4'} flex text-start justify-between gap-[15px] px-4 py-2 w-full`}>
                         <h1 className={`hover:text-blue-600 text-base`} >Kuesioner</h1>
                     </Link>
                 </div>

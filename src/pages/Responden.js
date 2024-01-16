@@ -558,14 +558,14 @@ const Responden = () => {
                                     Diptya Bagus
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
-                                    <div className='flex items-center justify-center gap-2 text-xl'>
-                                      <button onClick={() => deleteModal(item.id)} className='p-2 bg-red-700 rounded-md text-white'>
+                                    <div className='flex items-center justify-center gap-2 text-lg'>
+                                      <button onClick={() => deleteModal(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
                                         <AiFillDelete/>
                                       </button>
-                                      <button onClick={() => openEditMasyarakat(item.id)} className='p-2 bg-blue-700 rounded-md text-white'>
+                                      <button onClick={() => openEditMasyarakat(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
                                         <AiFillEdit/>
                                       </button>
-                                      <button className='p-2 bg-indigo-700 rounded-md text-white'>
+                                      <button className='p-1.5 bg-gray-300  rounded-lg'>
                                         <AiFillEye/>
                                       </button>
                                     </div>
