@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 import { IconInsertPhoto } from '../assets'
 import ModalDelete from '../components/ModalDelete'
 import { concat, debounce } from 'lodash'
+import imageHandle from '../utils/imageHandle'
 
 const Relawan = () => {
 
@@ -172,7 +173,7 @@ const Relawan = () => {
       setPhone(response.data.data.phone)
       setAddress(response.data.data.address)
       setViewImage(response.data.data.image)
-      console.log(response)
+      console.log(response, 'resEditRelawan')
     } catch (error) {
       console.log(error)
     }
@@ -387,7 +388,7 @@ const Relawan = () => {
             <div className='flex gap-[20px] mb-[28px]'>
                 <h1 className='mb-2 text-xs font-medium text-gray-900'>Photo <span className='text-[#E00101]'>*</span></h1>
                 <label htmlFor='upload-image'>
-                    <div className='w-[87px] h-[87px] rounded-full bg-[#D9D9D9] bg-cover shadow-md border' style={{ backgroundImage: `url(${image? image : viewImage })` }}>
+                    <div className='w-[87px] h-[87px] rounded-full bg-[#D9D9D9] bg-cover shadow-md border' style={{ backgroundImage: `url(${viewImage? imageHandle(viewImage) : image })` }}>
                         {!viewImage &&
                             <div className='flex flex-col justify-center items-center space-y-3 h-full'>
                                 <img src={IconInsertPhoto} alt='Insert Humanusia' className='object-contain'/>
@@ -517,7 +518,7 @@ const Relawan = () => {
                 </div>
               </div>
 
-              <img className='w-[100px] h-[100px] rounded-lg border-2' src="https://i.pravatar.cc/200" alt="profile" />
+              <img className='w-[100px] h-[100px] rounded-lg border-2' src={imageHandle(dataDetailRelawan.image)} alt="profile" />
 
             </div>
             <div className='flex items-center justify-end gap-3'>

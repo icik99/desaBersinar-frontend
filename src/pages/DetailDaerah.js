@@ -3,16 +3,19 @@ import Sidebar from '../components/Sidebar'
 import Navbar from '../components/Navbar'
 import { useLocation } from 'react-router-dom'
 import Api from '../Api'
+import { Secret } from '../assets'
 
 const DetailDaerah = () => {
     const params = useLocation()
     const [dataDetailIndikator, setDataDetailIndikator] = useState('')
+    const [desaKecamatan, setDesaKecamatan] = useState('')
 
     const getDetailIndikator = async () => {
         try {
           const response = await Api.GetDetailIndikator(localStorage.getItem('token'), params.state.idDesaKecamatan)
+          console.log(response, 'detailIndikator')
           setDataDetailIndikator(response.data.data[0])
-          console.log(response.data.data[0], 'detailIndikator')
+          setDesaKecamatan(response.data.data[0].desa_kecamatan)
         } catch (error) {
           console.log(error)
         }
@@ -32,13 +35,16 @@ const DetailDaerah = () => {
           <div className='flex items-end justify-between mb-[40px] px-[40px]'>
             <div className='font-medium space-y-[4px] '>
               <h1 className="text-black text-2xl">Detail Daerah</h1>
-              <h1 className="text-gray-400 text-base">Kecamatan: Sokaraja</h1>
-              <h1 className="text-gray-400 text-base">Kelurahan / Desa: Kramat</h1>
+              <h1 className="text-gray-400 text-base">Kecamatan: {desaKecamatan.name_kecamatan? desaKecamatan.name_kecamatan : "-"}</h1>
+              <h1 className="text-gray-400 text-base">Kelurahan / Desa: {desaKecamatan.name? desaKecamatan.name : "-"}</h1>
             </div>
           </div>
 
           <div className='space-y-[40px] w-full px-12 pb-12'> 
           <div className="space-y-4 md:space-y-6 ">
+            <div className='absolute bg-[#F8F8F8] flex justify-center'>
+              <img src={Secret} className='z-10 h-[800px]'/>
+            </div>
             <div className='flex items-start gap-5'>
 
               <div className='grid grid-cols-12 w-full'>

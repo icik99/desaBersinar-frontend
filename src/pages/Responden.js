@@ -9,6 +9,8 @@ import Modal from '../components/Modal'
 import Api from '../Api'
 import ModalDelete from '../components/ModalDelete'
 import { debounce } from 'lodash'
+import imageHandle from '../utils/imageHandle'
+import moment from 'moment'
 
 const Responden = () => {
   // State Modal
@@ -40,6 +42,7 @@ const Responden = () => {
   const [uploadImage, setUploadImage] = useState('')
   const [dataRelawan, setDataRelawan] = useState('')
   const [dataMasyarakat, setDataMasyarakat] = useState('')
+  const [dataDetail, setDataDetail] = useState('')
 
   //Handle Image
     const handleViewImage = (e) => {
@@ -120,6 +123,17 @@ const Responden = () => {
         setEmail(response.data.data.email)
         setIdDesa(response.data.data.desaKecamatanId)
         setIdRelawan(response.data.data.relawanId)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    const openDetailMasyarakat = async (id) => {
+      setModalDetailResponden(!modalDetailResponden)
+      try {
+        const response = await Api.GetMasyarakatById(localStorage.getItem('token'), id)
+        console.log(response, 'detailMasyarakat')
+        setDataDetail(response.data.data)
       } catch (error) {
         console.log(error)
       }
@@ -272,7 +286,7 @@ const Responden = () => {
         content={
           <div className='space-y-[40px] w-full'> 
             <div className="space-y-4 md:space-y-6">
-              <div className='flex gap-[20px] mb-[28px]'>
+              {/* <div className='flex gap-[20px] mb-[28px]'>
                   <h1 className='mb-2 text-xs font-medium text-gray-900'>Photo <span className='text-[#E00101]'>*</span></h1>
                   <label htmlFor='upload-image'>
                       <div className='w-[87px] h-[87px] rounded-full bg-[#D9D9D9] bg-cover shadow-md border' style={{ backgroundImage: `url(${viewImage})` }}>
@@ -284,7 +298,7 @@ const Responden = () => {
                       </div>
                       <input type='file' className='hidden' id='upload-image' onChange={ (e) => handleViewImage(e) }/>
                   </label>
-              </div>
+              </div> */}
               <div className='flex items-center gap-2'>
                 <div className='w-full'>
                     <label className="mb-2 text-xs font-medium text-gray-900">Relawan<span className='text-red-600'>*</span></label>
@@ -374,7 +388,7 @@ const Responden = () => {
         content={
           <div className='space-y-[40px] w-full'> 
             <div className="space-y-4 md:space-y-6">
-              <div className='flex gap-[20px] mb-[28px]'>
+              {/* <div className='flex gap-[20px] mb-[28px]'>
                   <h1 className='mb-2 text-xs font-medium text-gray-900'>Photo <span className='text-[#E00101]'>*</span></h1>
                   <label htmlFor='upload-image'>
                       <div className='w-[87px] h-[87px] rounded-full bg-[#D9D9D9] bg-cover shadow-md border' style={{ backgroundImage: `url(${viewImage})` }}>
@@ -386,7 +400,7 @@ const Responden = () => {
                       </div>
                       <input type='file' className='hidden' id='upload-image' onChange={ (e) => handleViewImage(e) }/>
                   </label>
-              </div>
+              </div> */}
               <div className='flex items-center gap-2'>
                 <div className='w-full'>
                     <label className="mb-2 text-xs font-medium text-gray-900">Relawan<span className='text-red-600'>*</span></label>
@@ -470,9 +484,47 @@ const Responden = () => {
       }/>
       <ModalDelete
         activeModal={modalDeleteResponden}
-        buttonClose={() => modalDeleteResponden(!modalDeleteResponden)}
+        buttonClose={() => setModalDeleteResponden(!modalDeleteResponden)}
         submitButton={deleteMasyarakat}
-    />
+      />
+      <Modal
+      activeModal={modalDetailResponden}
+      title={'Detail Masyarakat'}
+      buttonClose={ () => setModalDetailResponden(!modalDetailResponden)}
+      width={'600px'}
+      content={
+        <div className='space-y-[40px] w-full'> 
+          <div className="space-y-4 md:space-y-6 ">
+            <div className='flex items-start gap-5'>
+
+              <div className='grid grid-cols-10 w-full'>
+                <div className='flex flex-col col-span-3 w-full'>
+                    <h1 className='border-b-2 py-1 text-sm'>Nama</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>TTL</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Kecamatan</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Desa</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Email</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Telepon</h1>
+                    <h1 className='border-b-2 py-1 text-sm'>Relawan</h1>
+                </div>
+                <div className='flex flex-col col-span-7 w-full'>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.fullname?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.placeBirth}, {moment(dataDetail.dateBirth).format('DD-MM-YYYY')}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.desa_kecamatan? dataDetail.desa_kecamatan.name_kecamatan : '-'} </h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.desa_kecamatan? dataDetail.desa_kecamatan.name : '-'}  </h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.email?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.phone?? '-'}</h1>
+                  <h1 className='border-b-2 py-1 text-sm'>: {dataDetail.relawan? dataDetail.relawan.fullname : '-'} </h1>
+                </div>
+              </div>
+            </div>
+            <div className='flex items-center justify-end gap-3'>
+              <button onClick={() => setModalDetailResponden(!modalDetailResponden)} className=" text-primary-600 border bg-gray-50  font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Close</button>
+            </div>
+
+          </div>
+        </div>   
+    }/>
         <div className='flex bg-[#F8F8F8]'>
           <Sidebar />
           <div className='w-full overflow-hidden'>
@@ -535,18 +587,18 @@ const Responden = () => {
                             <tbody>
                               {Object.values(dataMasyarakat).map((item, idx) => (
                                 <tr key={idx} class="bg-gray-100 border-b">
-                                  <td class="px-1.5 border py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">1</td>
+                                  <td class="px-1.5 border py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">{idx + 1}</td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
                                     {item.fullname}
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
-                                    {item.placeBirth}, {item.dateBirth}
+                                    {item.placeBirth}, {moment(item.dateBirth).format('DD-MM-YYYY')}
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
-                                    {item.kecamatan?? '-'}
+                                    {item.desa_kecamatan? item.desa_kecamatan.name_kecamatan : '-'}
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
-                                    {item.desa?? '-'}
+                                  {item.desa_kecamatan? item.desa_kecamatan.name : '-'}
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
                                     {item.phone}
@@ -555,18 +607,18 @@ const Responden = () => {
                                     {item.email}
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
-                                    Diptya Bagus
+                                    {item.relawan? item.relawan.fullname : '-'}
                                   </td>
                                   <td class="text-sm text-gray-900 font-light px-1.5 border py-4 whitespace-nowrap text-center">
                                     <div className='flex items-center justify-center gap-2 text-lg'>
-                                      <button onClick={() => deleteModal(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
-                                        <AiFillDelete/>
+                                      <button onClick={()=> openDetailMasyarakat(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
+                                        <AiFillEye/>
                                       </button>
                                       <button onClick={() => openEditMasyarakat(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
                                         <AiFillEdit/>
                                       </button>
-                                      <button className='p-1.5 bg-gray-300  rounded-lg'>
-                                        <AiFillEye/>
+                                      <button onClick={() => deleteModal(item.id)} className='p-1.5 bg-gray-300  rounded-lg'>
+                                        <AiFillDelete/>
                                       </button>
                                     </div>
                                   </td>
