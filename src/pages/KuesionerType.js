@@ -7,6 +7,7 @@ import Modal from '../components/Modal'
 import toast from 'react-hot-toast'
 import AddButton from '../components/AddButton'
 import { useNavigate } from 'react-router-dom'
+import ModalDelete from '../components/ModalDelete'
 
 const KuesionerType = () => {
     const [modalFormAddType, setModalFormAddType] = useState('')
@@ -21,6 +22,7 @@ const KuesionerType = () => {
     const [typeFormId, setTypeFormId] = useState('')
     const [refresh, setRefresh] = useState(false)
     const [nameForm, setNameForm] = useState('')
+    const [idKuesionerType, setIdKuesionerType] = useState('')
     const [answerType, setAnswerType] = useState('')
 
     const navigate = useNavigate()
@@ -96,6 +98,25 @@ const KuesionerType = () => {
         setTypeAnswer('')
       }
 
+      const [showModalDelete, setShowModalDelete] = useState()
+
+      const deleteRelawan = async () => {
+          try {
+            const resposne = await Api.DeleteTypeForm(localStorage.getItem('token'), idKuesionerType)
+            toast.success('Success Delete')
+            setShowModalDelete(!showModalDelete)
+            setRefresh(true)
+          } catch (error) {
+            console.log(error)
+            toast.error(error.response.message)
+          }
+        }
+      const deleteFileModal = (id) => {
+          setShowModalDelete(!showModalDelete)
+          setIdKuesionerType(id)
+          setRefresh(true)
+        }
+
       useEffect(() => {
         getTypeForm()
         setRefresh(false)
@@ -153,7 +174,11 @@ const KuesionerType = () => {
             </div>
             </div>
         }/>
-
+        <ModalDelete
+        activeModal={showModalDelete}
+        buttonClose={() => setShowModalDelete(!showModalDelete)}
+        submitButton={deleteRelawan}
+        />
         <Modal
             activeModal={showDetailTypeForm}
             title={'Detail Formulir Type'}
@@ -232,16 +257,14 @@ const KuesionerType = () => {
                                         <div className='flex items-center justify-center gap-2 text-xl'>
                                             <button onClick={() => navigate('/kuesioner', {state: {formTypeId: item.id}})} className='p-2 bg-blue-700 rounded-md text-white'>
                                             <h1 className='text-xs font-semibold'>Edit Kuesioner</h1>
-                                            {/* <AiFillEdit/> */}
                                             </button>
                                             <button onClick={() => openDetail(item.id)} className='p-2 bg-indigo-700 rounded-md text-white'>
                                             <h1 className='text-xs font-semibold'>Detail</h1>
-                                            {/* <AiFillEye/> */}
                                             </button>
                                             <button onClick={() => {openEditTypeForm(item.id)}} className='p-1.5 bg-gray-500 rounded-lg text-white'>
                                             <AiFillEdit/>
                                             </button>
-                                            <button className='p-1.5 bg-red-700 rounded-md text-white'>
+                                            <button onClick={() => deleteFileModal(item.id)} className='p-1.5 bg-red-700 rounded-md text-white'>
                                             <AiFillDelete/>
                                             </button>
                                         </div>

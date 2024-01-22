@@ -22,11 +22,10 @@ const Sidebar = () => {
                             <h1 className={`text-base  hover:text-blue-600`}>Dashboard</h1>
                     </Link>
 
-                    <Link to={'/admin'} className={`${location.pathname === '/admin' && 'border-blue-600 border-l-4 text-blue-600'} flex text-start gap-[15px] px-4 py-2 w-full`}>
+                    {/* <Link to={'/admin'} className={`${location.pathname === '/admin' && 'border-blue-600 border-l-4 text-blue-600'} flex text-start gap-[15px] px-4 py-2 w-full`}>
                         <h1 className={`hover:text-blue-600 text-base`}>Admin</h1>
-                    </Link>
+                    </Link> */}
                     
-
                     <Link to={'/relawan'} className={`${location.pathname === '/relawan' && 'border-blue-600 border-l-4 text-blue-600'} flex text-start gap-[15px] px-4 py-2 w-full`}>
                         <h1 className={`hover:text-blue-600 text-base`}>Relawan</h1>
                     </Link>

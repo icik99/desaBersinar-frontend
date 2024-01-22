@@ -36,7 +36,7 @@ function Dashboard() {
         <div className='w-full overflow-hidden'>
           <Navbar Judul={'Dashboard'} SubJudul={''} />
           <div className='px-[40px]'>
-              <div className='flex gap-[40px] items-start mb-10'>
+              <div className='md:flex lg:flex-row md:gap-[40px] lg:gap-[40px] flex-col gap-[20px] items-start mb-10'>
                   <div className='py-[40px] px-[30px] bg-white w-full'>
                       <div className='flex items-center justify-between  mb-2'>
                         <h1 className='text-[22px] font-medium'>Responden</h1>

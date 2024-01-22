@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import Navbar from '../components/Navbar'
 import Sidebar from '../components/Sidebar'
-import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
-import AddButton from '../components/AddButton';
-import Modal from '../components/Modal';
-
 const Admin = () => {
   return (
     <div className='min-h-screen '>

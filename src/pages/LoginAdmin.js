@@ -13,6 +13,7 @@ function LoginAdmin() {
     const login = async () => {
         try {
             const response = await Api.Login(email, password)
+            console.log(response, 'reslogin')
             localStorage.setItem('token', response.data.accessToken)
             navigate('/dashboard')
             toast('Selamat Datang Kembali!', {
@@ -28,7 +29,7 @@ function LoginAdmin() {
   return (
     <div>
         <section className="bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+            <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0">
                 <div className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
                     <img className="w-10 h-10 mr-2" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/88/Logo_BNN.svg/900px-Logo_BNN.svg.png" alt="logo" />
                     Desa Bersinar BNN    
