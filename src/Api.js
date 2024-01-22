@@ -1,10 +1,9 @@
 import request from "./utils/request";
 
 class Api {
-
-
+    
     static urlAPI() {
-        return 'http://localhost:5001/'
+        return  process.env.REACT_APP_BACKEND_URL
     }
 
     // Begin :: Auth
